@@ -282,21 +282,25 @@ function showNotification(message, type = 'info') {
 
 // Load news when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    checkLoginStatus();
     loadNews();
     setInterval(loadNews, 300000);
     
-    // Check login status and initialize premium features
-    checkLoginStatus();
-    initializePremiumFeatures();
-    
-    // Add login form handler if on login page
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    
     // Update date and time
     updateDateTime();
+
+    // Add home link click handler
+    const homeLink = document.querySelector('.nav-links a[href="index.html"]');
+    if (homeLink) {
+        homeLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Clear any existing user data
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            // Redirect to home page
+            window.location.href = 'index.html';
+        });
+    }
 
     // Password visibility toggle and form handling
     const togglePassword = document.querySelector('.toggle-password');
@@ -350,12 +354,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    showNotification('Account created successfully!', 'success');
-                    // Store user data and token
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    localStorage.setItem('token', data.token);
+                    showNotification('Account created successfully! Please login to continue.', 'success');
+                    // Redirect to login page after 2 seconds
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        console.log('Redirecting to login page...');
+                        window.location.href = './login.html';
                     }, 2000);
                 } else {
                     showNotification(data.message || 'Error creating account', 'error');
@@ -398,10 +401,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     showNotification('Login successful!', 'success');
                     // Store user data and token
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('user', JSON.stringify({
+                        fullName: data.user.fullName,
+                        email: data.user.email
+                    }));
                     localStorage.setItem('token', data.token);
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        console.log('Login successful, redirecting to home page...');
+                        window.location.href = './index.html';
                     }, 1000);
                 } else {
                     showNotification(data.message || 'Invalid credentials', 'error');
@@ -424,33 +431,23 @@ const VALID_CREDENTIALS = {
 // Check if user is logged in
 function checkLoginStatus() {
     const user = localStorage.getItem('user');
+    const currentPage = window.location.pathname.split('/').pop();
+    
     if (user) {
         const userData = JSON.parse(user);
         updateUIForLoggedInUser(userData);
-    }
-}
-
-// Handle login form submission
-function handleLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    if (email === VALID_CREDENTIALS.email && password === VALID_CREDENTIALS.password) {
-        // Store user info in localStorage
-        localStorage.setItem('user', JSON.stringify({
-            name: VALID_CREDENTIALS.name,
-            email: VALID_CREDENTIALS.email
-        }));
         
-        // Initialize premium features
-        initializePremiumFeatures();
-        
-        // Redirect to main page
-        window.location.replace('index.html');
+        // If on login or signup page, redirect to home
+        if (currentPage === 'login.html' || currentPage === 'signup.html') {
+            window.location.href = 'index.html';
+        }
     } else {
-        alert('Invalid credentials. Please try again.');
+        // Show sign in button on home page
+        const signInBtn = document.querySelector('.sign-in-btn');
+        if (signInBtn) {
+            signInBtn.style.display = 'block';
+            signInBtn.href = 'login.html';
+        }
     }
 }
 
@@ -460,12 +457,30 @@ function updateUIForLoggedInUser(user) {
     if (signInBtn) {
         signInBtn.style.display = 'none';
     }
+
+    // Add user's full name to the navigation
+    const navRight = document.querySelector('.nav-right');
+    if (navRight) {
+        // Remove existing user welcome if any
+        const existingWelcome = document.querySelector('.user-welcome');
+        if (existingWelcome) {
+            existingWelcome.remove();
+        }
+
+        const userWelcome = document.createElement('div');
+        userWelcome.className = 'user-welcome';
+        userWelcome.innerHTML = `
+            <span>Welcome, ${user.fullName}</span>
+        `;
+        navRight.insertBefore(userWelcome, navRight.firstChild);
+    }
 }
 
 // Handle logout
 function handleLogout() {
     localStorage.removeItem('user');
-    window.location.reload();
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
 }
 
 function deleteAllCookies() {
