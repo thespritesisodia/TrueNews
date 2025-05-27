@@ -1,0 +1,376 @@
+.login-page {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    min-height: 100vh;
+}
+
+.login-container {
+    max-width: 450px;
+    margin: 120px auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-header h1 {
+    color: #1a2a6c;
+    font-size: 2.2rem;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: #333;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    padding: 0.9rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #1a2a6c;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.1);
+}
+
+.password-input-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #1a2a6c;
+}
+
+.checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: -0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin: 0;
+}
+
+.checkbox-group label {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.forgot-password {
+    margin-left: auto;
+    color: #1a2a6c;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #b21f1f;
+    text-decoration: underline;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.login-footer a {
+    color: #1a2a6c;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+    color: #b21f1f;
+    text-decoration: underline;
+}
+
+.password-requirements {
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+/* Dark Mode Styles */
+.dark-mode .login-container {
+    background: #2d2d2d;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .login-header h1 {
+    color: #ffffff;
+}
+
+.dark-mode .login-header p {
+    color: #cccccc;
+}
+
+.dark-mode .form-group label {
+    color: #ffffff;
+}
+
+.dark-mode .form-group input {
+    background: #404040;
+    border-color: #505050;
+    color: #ffffff;
+}
+
+.dark-mode .form-group input:focus {
+    border-color: #b21f1f;
+    box-shadow: 0 0 0 3px rgba(178, 31, 31, 0.1);
+}
+
+.dark-mode .toggle-password {
+    color: #cccccc;
+}
+
+.dark-mode .toggle-password:hover {
+    color: #fdbb2d;
+}
+
+.dark-mode .checkbox-group label {
+    color: #ffffff;
+}
+
+.dark-mode .forgot-password {
+    color: #fdbb2d;
+}
+
+.dark-mode .forgot-password:hover {
+    color: #ffffff;
+}
+
+.dark-mode .login-footer {
+    color: #cccccc;
+}
+
+.dark-mode .login-footer a {
+    color: #fdbb2d;
+}
+
+.dark-mode .login-footer a:hover {
+    color: #ffffff;
+}
+
+.dark-mode .password-requirements {
+    color: #999999;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        margin: 100px auto;
+        padding: 2rem;
+        width: 90%;
+    }
+
+    .login-header h1 {
+        font-size: 2rem;
+    }
+
+    .login-btn {
+        padding: 0.9rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        margin: 80px auto;
+        padding: 1.5rem;
+    }
+
+    .login-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-group input {
+        padding: 0.8rem;
+    }
+
+    .checkbox-group {
+        flex-wrap: wrap;
+    }
+
+    .forgot-password {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: right;
+    }
+}
+
+.social-login {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.social-login p {
+    color: #666;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.social-login p::before,
+.social-login p::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: #ddd;
+}
+
+.social-login p::before {
+    left: 0;
+}
+
+.social-login p::after {
+    right: 0;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 2rem;
+    color: #666;
+}
+
+.signup-link a {
+    color: #1a2a6c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+.news-preview {
+    width: 400px;
+}
+
+.preview-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.preview-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.preview-item h3 {
+    color: #1a2a6c;
+    margin-bottom: 0.5rem;
+}
+
+.preview-item p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+    .login-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .login-box,
+    .news-preview {
+        width: 100%;
+        max-width: 400px;
+    }
+} 

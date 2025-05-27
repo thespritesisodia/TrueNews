@@ -2,7 +2,7 @@
 const dummyNews = [
     {
         title: "Global Climate Summit Reaches Historic Agreement",
-        description: "World leaders have agreed on ambitious new climate targets for 2030, marking a significant step forward in the fight against climate change. The agreement includes unprecedented commitments from major economies.",
+        description: "World leaders have agreed on ambitious new climate targets for 2030, marking a significant step forward in the fight against climate change.",
         urlToImage: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=800&auto=format&fit=crop",
         publishedAt: "2024-03-15T10:30:00Z",
         source: { name: "Global News Network" },
@@ -10,7 +10,7 @@ const dummyNews = [
     },
     {
         title: "Revolutionary AI Breakthrough in Healthcare",
-        description: "Scientists have developed a new artificial intelligence system that can predict potential health issues with 95% accuracy. The breakthrough could revolutionize preventive healthcare worldwide.",
+        description: "Scientists have developed a new artificial intelligence system that can predict potential health issues with 95% accuracy.",
         urlToImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&auto=format&fit=crop",
         publishedAt: "2024-03-15T09:15:00Z",
         source: { name: "Tech Daily" },
@@ -18,7 +18,7 @@ const dummyNews = [
     },
     {
         title: "Space Mission Discovers Signs of Ancient Life on Mars",
-        description: "NASA's latest Mars rover has discovered compelling evidence of ancient microbial life. The findings could reshape our understanding of life in the universe.",
+        description: "NASA's latest Mars rover has discovered compelling evidence of ancient microbial life.",
         urlToImage: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800&auto=format&fit=crop",
         publishedAt: "2024-03-15T08:45:00Z",
         source: { name: "Space News" },
@@ -147,24 +147,20 @@ function initializePremiumFeatures() {
             const premiumNav = document.createElement('div');
             premiumNav.className = 'premium-nav';
             premiumNav.innerHTML = `
-                <button class="premium-btn" onclick="toggleDarkMode()">
-                    <i class="fas fa-moon"></i> Dark Mode
+                <div class="user-welcome">
+                    <span>Welcome, ${user.name}</span>
+                </div>
+                <button class="premium-btn dark-mode-toggle" onclick="toggleDarkMode()" data-tooltip="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
                 </button>
-                <button class="premium-btn" onclick="showSavedArticles()">
-                    <i class="fas fa-bookmark"></i> Saved
-                </button>
-                <button class="premium-btn" onclick="showReadingHistory()">
-                    <i class="fas fa-history"></i> History
-                </button>
-                <button class="premium-btn" onclick="showPreferences()">
-                    <i class="fas fa-cog"></i> Settings
+                <button class="premium-btn logout-btn" onclick="handleLogout()" data-tooltip="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
                 </button>
             `;
             mainNav.appendChild(premiumNav);
         }
 
-        // Load saved articles and preferences
-        loadSavedArticles();
+        // Load preferences
         loadPreferences();
     }
 }
@@ -263,12 +259,25 @@ function showPreferences() {
 }
 
 // Function to show notification
-function showNotification(message) {
+function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = 'notification';
+    notification.className = `notification ${type}`;
     notification.textContent = message;
+    
     document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    
+    // Trigger animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
 }
 
 // Load news when the page loads
@@ -288,6 +297,121 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update date and time
     updateDateTime();
+
+    // Password visibility toggle and form handling
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordInput = document.querySelector('#password');
+    const signupForm = document.getElementById('signupForm');
+
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    }
+
+    // Signup form validation
+    if (signupForm) {
+        signupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // Password validation
+            if (password.length < 8 || !/\d/.test(password)) {
+                showNotification('Password must be at least 8 characters long and include a number', 'error');
+                return;
+            }
+            
+            // Confirm password validation
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        email,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showNotification('Account created successfully!', 'success');
+                    // Store user data and token
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('token', data.token);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Error creating account', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showNotification('Error creating account. Please try again.', 'error');
+            }
+        });
+    }
+
+    // Login form handling
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Basic validation
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showNotification('Login successful!', 'success');
+                    // Store user data and token
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('token', data.token);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    showNotification(data.message || 'Invalid credentials', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('Error logging in. Please try again.', 'error');
+            }
+        });
+    }
 });
 
 // Dummy user credentials
@@ -301,7 +425,8 @@ const VALID_CREDENTIALS = {
 function checkLoginStatus() {
     const user = localStorage.getItem('user');
     if (user) {
-        updateUIForLoggedInUser(JSON.parse(user));
+        const userData = JSON.parse(user);
+        updateUIForLoggedInUser(userData);
     }
 }
 
@@ -333,10 +458,7 @@ function handleLogin(event) {
 function updateUIForLoggedInUser(user) {
     const signInBtn = document.querySelector('.sign-in-btn');
     if (signInBtn) {
-        signInBtn.innerHTML = `
-            <span class="user-name">${user.name}</span>
-            <button onclick="handleLogout()" class="logout-btn">Logout</button>
-        `;
+        signInBtn.style.display = 'none';
     }
 }
 
@@ -412,28 +534,4 @@ function loadSavedArticles() {
 function loadPreferences() {
     const preferences = JSON.parse(localStorage.getItem('preferences') || '{}');
     PREMIUM_FEATURES.preferences = preferences;
-}
-
-// Update the handleLogin function
-function handleLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    if (email === VALID_CREDENTIALS.email && password === VALID_CREDENTIALS.password) {
-        // Store user info in localStorage
-        localStorage.setItem('user', JSON.stringify({
-            name: VALID_CREDENTIALS.name,
-            email: VALID_CREDENTIALS.email
-        }));
-        
-        // Initialize premium features
-        initializePremiumFeatures();
-        
-        // Redirect to main page
-        window.location.replace('index.html');
-    } else {
-        alert('Invalid credentials. Please try again.');
-    }
 } 
